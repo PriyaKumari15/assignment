@@ -1,26 +1,41 @@
 import React from 'react';
-import logo from './logo.svg';
+import { connect } from "react-redux";
+
+import { updateData } from "./action";
+
 import './App.css';
 
-function App() {
+function App(props) {
+  props.updateData(props.sentence);
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <textarea rows="2" cols="100" value={props.sentence}
+          onChange={(e, extra) => props.updateData(e.target.value)}></textarea>
+        <div>
+          <input type="button" value="Clear" onClick={() => props.updateData('')}></input>
+        </div>
+        {props.isShow ? <div>
+          <p>{props.sentence}</p>
+          <div className="App-data">
+            <p>{`Last Word Entered is : `} </p>
+            <p className="App-link">{props.lastWord}</p>
+          </div>
+        </div> : null}
       </header>
     </div>
   );
 }
+const mapDispatchToProps = (dispatch) => ({
+  updateData: (payload) => dispatch(updateData(payload))
+});
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    sentence: state.sentence,
+    lastWord: state.lastWord,
+    isShow: state.isShow
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
